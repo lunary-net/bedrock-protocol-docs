@@ -1,0 +1,1283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bedrock Protocol Documentation</title>
+    <style>
+    .http {
+        color: green; /* Matches "GET" often displayed in green */
+        font-style: normal;
+    }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --text-color: #1f2937;
+            --light-bg: #f9fafb;
+            --code-bg: #f3f4f6;
+            --border-color: #e5e7eb;
+            --header-height: 64px;
+            --sidebar-width: 280px;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        header {
+            background-color: white;
+            height: var(--header-height);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-right: 48px;
+        }
+        
+        .search-container {
+            flex: 1;
+            max-width: 600px;
+            position: relative;
+        }
+        
+        #search-input {
+            width: 100%;
+            padding: 8px 16px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        
+        #search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-top: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .search-result {
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        
+        .search-result:hover {
+            background-color: var(--light-bg);
+        }
+        
+        .search-result:last-child {
+            border-bottom: none;
+        }
+        
+        .layout {
+            display: flex;
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            border-right: 1px solid var(--border-color);
+            padding: 24px;
+            position: fixed;
+            top: var(--header-height);
+            bottom: 0;
+            overflow-y: auto;
+        }
+        
+        .sidebar-group {
+            margin-bottom: 24px;
+        }
+        
+        .sidebar-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--text-color);
+        }
+        
+        .sidebar-links a {
+            display: block;
+            padding: 6px 0;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+        
+        .sidebar-links a:hover, .sidebar-links a.active {
+            color: var(--primary-color);
+            opacity: 1;
+        }
+        
+        .content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 40px;
+            max-width: 900px;
+        }
+        
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 80px;  /* For smooth scrolling */
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 16px;
+        }
+        
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            background-color: var(--code-bg);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background-color: var(--code-bg);
+            border-radius: 6px;
+            padding: 16px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+        
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 24px;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--light-bg);
+            font-weight: 600;
+        }
+        
+        .method-signature {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            background-color: var(--code-bg);
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+        
+        .parameter-table {
+            margin-top: 12px;
+        }
+        
+        .property {
+            margin-bottom: 32px;
+        }
+        
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 99;
+                background: white;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .mobile-menu-button {
+                display: block;
+                margin-right: 16px;
+            }
+            
+            .logo {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="mobile-menu-button" aria-label="Toggle menu">☰</button>
+        <div class="logo">Bedrock Protocol</div>
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search documentation...">
+            <div id="search-results"></div>
+        </div>
+    </header>
+    
+    <div class="layout">
+        <nav class="sidebar">
+            <div class="sidebar-group">
+                <div class="sidebar-title">Getting Started</div>
+                <div class="sidebar-links">
+                    <a href="#introduction" class="active">Introduction</a>
+                    <a href="#installation">Installation</a>
+                    <a href="#quick-start">Quick Start</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-group">
+                <div class="sidebar-title">Core Concepts</div>
+                <div class="sidebar-links">
+                    <a href="#clients">Clients</a>
+                    <a href="#protocols">Protocols</a>
+                    <a href="#packets">Packets</a>
+                    <a href="#events">Events</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-group">
+                <div class="sidebar-title">API Reference</div>
+                <div class="sidebar-links">
+                    <a href="#create-client">createClient</a>
+                    <a href="#client-class">Client</a>
+                    <a href="#packet-class">Packet</a>
+                    <a href="#protocol-handler">ProtocolHandler</a>
+                    <a href="#profile">Profile</a>
+                    <a href="#skin-data">skinData</a>
+                </div>
+            </div>
+            
+            <div class="sidebar-group">
+                <div class="sidebar-title">Advanced</div>
+                <div class="sidebar-links">
+                    <a href="#custom-protocols">Custom Protocols</a>
+                    <a href="#event-listeners">Event listeners</a>
+                    <a href="#security">Security</a>
+                    <a href="#performance">Performance Optimization</a>
+                </div>
+            </div>
+        </nav>
+        
+        <main class="content">
+            <section id="introduction" class="section">
+                <h1>Bedrock Protocol</h1>
+                <p>
+                    The Bedrock Protocol library provides a powerful and flexible interface for communicating with Minecraft Bedrock Edition servers and clients. This documentation will help you understand how to use the library to create clients, handle packets, and implement custom protocols.
+                </p>
+                <p>
+                    Whether you're building a server, proxy, or client, Bedrock Protocol offers the tools you need to interact with the Minecraft Bedrock network ecosystem.
+                </p>
+            </section>
+            
+            <section id="installation" class="section">
+                <h2>Installation</h2>
+                <p>You can install the Bedrock Protocol package using npm:</p>
+                <pre><code>npm install bedrock-protocol</code></pre>
+                <p>Or using yarn:</p>
+                <pre><code>yarn add bedrock-protocol</code></pre>
+            </section>
+            
+            <section id="quick-start" class="section">
+                <h2>Quick Start</h2>
+                <p>
+                    Here's a basic example to help you get started with Bedrock Protocol. This code creates a client that connects to a Bedrock server:
+                </p>
+                <pre><code>const { createClient } = require('bedrock-protocol')
+
+// Create a new client
+const client = createClient({
+  host: 'localhost',
+  port: 19132,
+  username: 'BedrockPlayer',
+  offline: true
+})
+
+// Listen for login
+client.on('spawn', () => {
+  console.log('Successfully connected to the server!')
+})
+
+// Handle errors
+client.on('error', (err) => {
+  console.error('Error:', err)
+})</code></pre>
+            </section>
+            
+            <section id="clients" class="section">
+                <h2>Core Concepts: Clients</h2>
+                <p>
+                    A client in Bedrock Protocol represents a connection to a Minecraft Bedrock server. The client handles authentication, encryption, compression, and packet management.
+                </p>
+                <p>
+                    Clients can be created in several modes:
+                </p>
+                <ul>
+                    <li><strong>Online Mode</strong>: Connects with Microsoft authentication</li>
+                    <li><strong>Offline Mode</strong>: Connects with a username only</li>
+                </ul>
+                <p>
+                    The client object provides methods for sending packets and events for receiving packets.
+                </p>
+            </section>
+            
+            <section id="protocols" class="section">
+                <h2>Core Concepts: Protocols</h2>
+                <p>
+                    Protocols define the structure and interpretation of packets. Bedrock Protocol supports multiple protocol versions corresponding to different Minecraft versions.
+                </p>
+                <p>
+                    The library automatically handles version compatibility by translating packets between different protocol versions when necessary.
+                </p>
+            </section>
+            
+            <section id="packets" class="section">
+                <h2>Core Concepts: Packets</h2>
+                <p>
+                    Packets are the basic unit of communication in the Bedrock Protocol. Each packet has:
+                </p>
+                <ul>
+                    <li><strong>ID</strong>: A numeric identifier for the packet type</li>
+                    <li><strong>Name</strong>: A string identifier (e.g., "Login", "MovePlayer")</li>
+                    <li><strong>Payload</strong>: The data contained in the packet</li>
+                </ul>
+                <p>
+                    The library handles serializing and deserializing packets according to the protocol definition.
+                </p>
+            </section>
+            
+            <section id="events" class="section">
+                <h2>Core Concepts: Events</h2>
+                <p>
+                    Bedrock Protocol uses an event-based architecture. Your client can listen for events like:
+                </p>
+                <ul>
+                    <li><strong>packet</strong>: Fired when any packet is received</li>
+                    <li><strong>spawn</strong>: Fired when the player spawns in the game</li>
+                    <li><strong>disconnect</strong>: Fired when the connection is closed</li>
+                    <li><strong>error</strong>: Fired when an error occurs</li>
+                </ul>
+                <p>
+                    You can also listen for specific packet types by name.
+                </p>
+            </section>
+            
+            <section id="create-client" class="section">
+                <h2>API Reference: createClient</h2>
+                <p>
+                    The <code>createClient</code> function is the main entry point for creating a new client connection to a Bedrock server.
+                </p>
+                <div class="method-signature">
+                    createClient(options: ClientOptions): Client
+                </div>
+                <h3>Parameters</h3>
+                <table class="parameter-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>options</td>
+                            <td>ClientOptions</td>
+                            <td>Configuration options for the client</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>ClientOptions Properties</h3>
+                <div class="property">
+                    <code>host</code>: string
+                    <p>The hostname or IP address of the server to connect to.</p>
+                </div>
+                <div class="property">
+                    <code>port</code>: number
+                    <p>The port of the server (defaults to 19132).</p>
+                </div>
+                <div class="property">
+                    <code>username</code>: string
+                    <p>The username to use for the connection. (Can be blank)</p>
+                </div>
+                <div class="property">
+                    <code>offline</code>: boolean
+                    <p>Whether to connect in offline mode (without Microsoft authentication).</p>
+                </div>
+                <div class="property">
+                    <code>version</code>: string
+                    <p>The protocol version to use (defaults to the latest supported version).</p>
+                </div>
+                <div class="property">
+                    <code>authTitle</code>: string
+                    <p>The title ID to use for authentication (defaults to Minecraft's title ID).</p>
+                </div>
+                <div class="property">
+                    <code>skipPing</code>: boolean
+                    <p>Whether to skip the initial ping packet (defaults to false).</p>
+                </div>
+                <h3>Returns</h3>
+                <p>Returns a new <code>Client</code> instance.</p>
+                <h3>Example</h3>
+                <pre><code>const { createClient } = require('bedrock-protocol')
+
+// Create an offline client
+const offlineClient = createClient({
+  host: 'localhost',
+  port: 19132,
+  username: 'Player1',
+  offline: true
+})
+
+// Create an online client with Microsoft authentication
+const onlineClient = createClient({
+  host: 'play.server.com',
+  port: 19132,
+  username: 'AuthenticatedPlayer',
+  offline: false
+})</code></pre>
+            </section>
+            
+            <section id="client-class" class="section">
+                <h2>API Reference: Client</h2>
+                <p>
+                    The <code>Client</code> class represents a connection to a Bedrock server. It handles packet sending, receiving, and event dispatching.
+                </p>
+                <h3>Properties</h3>
+                <div class="property">
+                    <code>options</code>: ClientOptions
+                    <p>The options used to create the client.</p>
+                </div>
+                <div class="property">
+                    <code>username</code>: string
+                    <p>The username used for the connection.</p>
+                </div>
+                <div class="property">
+                    <code>protocolVersion</code>: number
+                    <p>The protocol version being used.</p>
+                </div>
+                <h3>Methods</h3>
+                <div class="property">
+                    <code>connect()</code>: Promise&lt;void&gt;
+                    <p>Initiates the connection to the server.</p>
+                </div>
+                <div class="property">
+                    <code>disconnect(reason?: string)</code>: void
+                    <p>Disconnects from the server with an optional reason.</p>
+                </div>
+                <div class="property">
+                    <code>write(name: string, params: object)</code>: void
+                    <p>Sends a packet to the server.</p>
+                </div>
+                <div class="property">
+                    <code>on(event: string, listener: Function)</code>: this
+                    <p>Registers an event listener.</p>
+                </div>
+                <div class="property">
+                    <code>off(event: string, listener: Function)</code>: this
+                    <p>Removes an event listener.</p>
+                </div>
+                <h3>Example</h3>
+                <pre><code>// Create a client
+const client = createClient({
+  host: 'localhost',
+  port: 19132,
+  username: 'Player',
+  offline: true
+})
+
+// Send a chat message
+client.write('Text', {
+  type: 'chat',
+  source: { name: client.username },
+  message: 'Hello, world!'
+})
+
+// Listen for chat messages
+client.on('Text', (packet) => {
+  if (packet.type === 'chat') {
+    console.log(`${packet.source.name}: ${packet.message}`)
+  }
+})
+
+// Disconnect after 1 minute
+setTimeout(() => {
+  client.disconnect('Leaving the server')
+}, 60000)</code></pre>
+            </section>
+            
+            <section id="packet-class" class="section">
+                <h2>API Reference: Packet</h2>
+                <p>
+                    The <code>Packet</code> class represents a Bedrock protocol packet. It contains methods for serializing and deserializing data.
+                </p>
+                <h3>Properties</h3>
+                <div class="property">
+                    <code>id</code>: number
+                    <p>The numeric ID of the packet.</p>
+                </div>
+                <div class="property">
+                    <code>name</code>: string
+                    <p>The name of the packet (e.g., "Login", "MovePlayer").</p>
+                </div>
+                <div class="property">
+                    <code>params</code>: object
+                    <p>The payload data of the packet.</p>
+                </div>
+                <h3>Methods</h3>
+                <div class="property">
+                    <code>static serialize(packet: object, protocol: Protocol)</code>: Buffer
+                    <p>Serializes a packet into a buffer.</p>
+                </div>
+                <div class="property">
+                    <code>static deserialize(buffer: Buffer, protocol: Protocol)</code>: Packet
+                    <p>Deserializes a buffer into a packet.</p>
+                </div>
+                <h3>Example</h3>
+                <pre><code>// Access packet data from an event
+client.on('MovePlayer', (packet) => {
+  console.log(`Player moved to: ${packet.position.x}, ${packet.position.y}, ${packet.position.z}`)
+  console.log(`Rotation: ${packet.rotation.x}, ${packet.rotation.y}, ${packet.rotation.z}`)
+})</code></pre>
+            </section>
+            
+            <section id="protocol-handler" class="section">
+                <h2>API Reference: ProtocolHandler</h2>
+                <p>
+                    The <code>ProtocolHandler</code> class manages protocol versions and packet definitions.
+                </p>
+                <h3>Methods</h3>
+                <div class="property">
+                    <code>static getProtocol(version: string | number)</code>: Protocol
+                    <p>Gets a protocol definition for a specific version.</p>
+                </div>
+                <div class="property">
+                    <code>static getLatestProtocol()</code>: Protocol
+                    <p>Gets the latest supported protocol definition.</p>
+                </div>
+                <h3>Example</h3>
+                <pre><code>const { ProtocolHandler } = require('bedrock-protocol')
+
+// Get the protocol definition for a specific version
+const protocol = ProtocolHandler.getProtocol('1.19.0')
+
+// Get the latest protocol
+const latestProtocol = ProtocolHandler.getLatestProtocol()
+
+console.log(`Protocol version: ${protocol.version}`)
+console.log(`Protocol game version: ${protocol.gameVersion}`)</code></pre>
+            </section>
+
+            <section id="profile" class="section">
+                <h2>API Reference: Profile</h2>
+                <p>
+                    You can get your xbox account information (UUID, XUID, Gamertag). Using this example code
+                </p>
+                <pre>
+                    <code>
+const { createClient } = require('bedrock-protocol');
+
+const client = createClient({
+    ip: "127.0.0.1" // Example IP Address
+    port: 19132, // Default port
+    username: "" // Can be blank
+});
+
+client.on('session', (profile) => {
+    console.log(profile)
+});
+                    </code>
+                </pre>
+            </section>
+
+            <section id="skin-data" class="section">
+                <h2>API Reference: SkinData</h2>
+                <p>
+                    The <code>SkinData</code> interface allows you to customize player skins when connecting to Bedrock servers. This gives you complete control over your character's appearance.
+                </p>
+                
+                <div class="skin-preview" style="background-color: var(--light-bg); padding: 20px; border-radius: 8px; margin-bottom: 24px; text-align: center;">
+                    <div style="display: inline-block; border: 2px solid var(--border-color); border-radius: 6px; padding: 10px; background-color: #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                        <div style="width: 120px; height: 200px; background-color: #ddd; display: flex; align-items: center; justify-content: center; color: var(--text-color); font-weight: bold;">
+                            Skin Preview
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.9em; color: var(--text-color); opacity: 0.8;">Custom Character Model</div>
+                    </div>
+                </div>
+                
+                <h3>SkinData Properties</h3>
+                
+                <div class="property">
+                    <code>skinId</code>: string
+                    <p>A unique identifier for the skin. This should be a UUID that uniquely identifies your skin.</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinResourcePatch</code>: string | Buffer
+                    <p>JSON data that defines which texture is used for each part of the skin geometry. Typically specifies the geometry name.</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinData</code>: Buffer
+                    <p>The raw RGBA skin data buffer, representing the pixel data of the skin texture. Must be in PNG format.</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinImageWidth</code>: number
+                    <p>Width of the skin image in pixels (default: 64).</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinImageHeight</code>: number
+                    <p>Height of the skin image in pixels (default: 64 or 128).</p>
+                </div>
+                
+                <div class="property">
+                    <code>capeData</code>: Buffer | null
+                    <p>The raw RGBA cape data buffer, or null if no cape is used.</p>
+                </div>
+                
+                <div class="property">
+                    <code>capeImageWidth</code>: number
+                    <p>Width of the cape image in pixels (default: 64).</p>
+                </div>
+                
+                <div class="property">
+                    <code>capeImageHeight</code>: number
+                    <p>Height of the cape image in pixels (default: 32).</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinGeometryName</code>: string
+                    <p>The name of the skin geometry model (e.g., "geometry.humanoid.custom").</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinGeometry</code>: Buffer
+                    <p>The skin geometry data in JSON format, defining the 3D model structure.</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinAnimationData</code>: Buffer
+                    <p>JSON data defining animations for the skin, if any.</p>
+                </div>
+                
+                <div class="property">
+                    <code>skinColor</code>: string
+                    <p>The base skin color in hex format (e.g., "#FFFFFF").</p>
+                </div>
+                
+                <div class="property">
+                    <code>armSize</code>: string
+                    <p>Size of the arms. Either "slim" or "wide".</p>
+                </div>
+                
+                <div class="property">
+                    <code>personalPieces</code>: Array
+                    <p>Array of custom skin pieces for personalization.</p>
+                </div>
+                
+                <div class="property">
+                    <code>isPremiumSkin</code>: boolean
+                    <p>Whether the skin is a premium skin from the Marketplace.</p>
+                </div>
+                
+                <div class="property">
+                    <code>isPersonaSkin</code>: boolean
+                    <p>Whether the skin uses the Persona system.</p>
+                </div>
+                
+                <div class="property">
+                    <code>capeId</code>: string
+                    <p>Unique identifier for the cape, if present.</p>
+                </div>
+                
+                <div class="property">
+                    <code>fullSkinId</code>: string
+                    <p>A full identifier that includes all skin properties.</p>
+                </div>
+                
+                <h3>Skin Geometry Types</h3>
+                <div style="background: linear-gradient(to right, var(--code-bg), white); padding: 16px; border-radius: 6px; margin-bottom: 24px;">
+                    <ul style="list-style-type: none; padding: 0;">
+                        <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                            <span style="font-weight: bold; color: var(--primary-color);">geometry.humanoid.custom</span> - Standard player model
+                        </li>
+                        <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                            <span style="font-weight: bold; color: var(--primary-color);">geometry.humanoid.customSlim</span> - Slim arms model
+                        </li>
+                        <li style="margin-bottom: 10px; padding-left: 20px; position: relative;">
+                            <span style="font-weight: bold; color: var(--primary-color);">geometry.persona.*</span> - Various Persona models
+                        </li>
+                    </ul>
+                </div>
+                
+                <h3>Example: Setting a Custom Skin</h3>
+                <pre><code>const fs = require('fs')
+            const { createClient } = require('bedrock-protocol')
+            const { v4: uuidv4 } = require('uuid')
+            
+            // Load skin resources
+            const skinData = fs.readFileSync('./player_skin.png')
+            const skinGeometry = fs.readFileSync('./player_geometry.json')
+            
+            // Create client with custom skin
+            const client = createClient({
+              host: 'localhost',
+              port: 19132,
+              username: 'Player',
+              offline: true,
+              skinData: {
+                skinId: uuidv4(),
+                skinData: skinData,
+                skinImageWidth: 64,
+                skinImageHeight: 64,
+                skinGeometryName: 'geometry.humanoid.custom',
+                skinGeometry: skinGeometry,
+                capeData: null,
+                isPremiumSkin: false,
+                isPersonaSkin: false,
+                armSize: 'wide',
+                skinColor: '#FFFFFF',
+                personalPieces: []
+              }
+            })</code></pre>
+            
+                <h3>Example: Using a Slim Arms Model</h3>
+                <pre><code>const client = createClient({
+              // ... other options
+              skinData: {
+                // ... other skin properties
+                skinGeometryName: 'geometry.humanoid.customSlim',
+                armSize: 'slim'
+              }
+            })</code></pre>
+            
+                <div class="tip-box" style="background-color: #e6f7ff; border-left: 4px solid #1890ff; padding: 16px; margin: 24px 0; border-radius: 0 4px 4px 0;">
+                    <h4 style="margin-top: 0; color: #1890ff;">Pro Tip: Skin Dimensions</h4>
+                    <p style="margin-bottom: 0;">Standard Minecraft skins use a 64×64 pixel texture for wide arm models or 64×64/64×128 for slim arm models. Custom models can use different dimensions, but these are the most widely compatible.</p>
+                </div>
+            
+                <h3>Skin Format Reference</h3>
+                <div style="display: flex; justify-content: center; margin: 24px 0;">
+                    <div style="background-color: white; border: 1px solid var(--border-color); border-radius: 6px; padding: 10px; width: 300px; text-align: center;">
+                        <div style="color: var(--primary-color); font-weight: bold; margin-bottom: 10px;">Standard Skin Layout</div>
+                        <div style="width: 100%; height: 200px; background-color: #f5f5f5; display: flex; align-items: center; justify-content: center; color: #888;">
+                            [Skin Layout Diagram]
+                        </div>
+                        <div style="font-size: 0.9em; margin-top: 10px; color: #666;">64×64 pixel standard layout</div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="custom-protocols" class="section">
+                <h2>Advanced: Custom Protocols</h2>
+                <p>
+                    You can extend Bedrock Protocol with custom packet definitions for modded servers or proxy implementations.
+                </p>
+                <pre><code>const { ProtocolHandler, Protocol } = require('bedrock-protocol')
+
+// Create a custom protocol based on an existing one
+const baseProtocol = ProtocolHandler.getProtocol('1.19.0')
+const customProtocol = new Protocol(baseProtocol)
+
+// Add a custom packet type
+customProtocol.addPacket({
+  name: 'CustomPacket',
+  id: 0xFC, // Choose an ID that doesn't conflict with existing packets
+  definition: {
+    message: 'string',
+    value: 'int',
+    data: [{ name: 'string', count: 'int' }]
+  }
+})
+
+// Use the custom protocol
+const client = createClient({
+  host: 'localhost',
+  port: 19132,
+  username: 'Player',
+  offline: true,
+  protocol: customProtocol
+})</code></pre>
+            </section>
+
+            <section id="event-listeners" class="section">
+                <h2>Advanced: Event Listeners & Handling</h2>
+                <p>
+                    The Bedrock Protocol library uses an event-driven architecture for handling network communication. Understanding how to properly set up and manage event listeners is crucial for building robust applications.
+                </p>
+                
+                <h3>Common Events</h3>
+                <div class="event-table" style="margin-bottom: 24px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Description</th>
+                                <th>Data</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>spawn</code></td>
+                                <td>Fired when the client spawns in the world</td>
+                                <td>None</td>
+                            </tr>
+                            <tr>
+                                <td><code>disconnect</code></td>
+                                <td>Fired when the connection is closed</td>
+                                <td>String (reason)</td>
+                            </tr>
+                            <tr>
+                                <td><code>error</code></td>
+                                <td>Fired when an error occurs</td>
+                                <td>Error object</td>
+                            </tr>
+                            <tr>
+                                <td><code>packet</code></td>
+                                <td>Fired for every packet received</td>
+                                <td>Packet object</td>
+                            </tr>
+                            <tr>
+                                <td><code>raw</code></td>
+                                <td>Fired for raw packet data before processing</td>
+                                <td>Buffer</td>
+                            </tr>
+                            <tr>
+                                <td><code>session</code></td>
+                                <td>Fired when session information is received</td>
+                                <td>Session object</td>
+                            </tr>
+                            <tr>
+                                <td><code>login</code></td>
+                                <td>Fired when login process completes</td>
+                                <td>Login data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            
+                <h3>Packet-Specific Events</h3>
+                <p>
+                    You can listen for specific packet types by using the packet name as the event name:
+                </p>
+                <pre><code>// Listen for chat messages
+            client.on('Text', (packet) => {
+              console.log(`${packet.source.name}: ${packet.message}`)
+            })
+            
+            // Listen for player movement
+            client.on('MovePlayer', (packet) => {
+              console.log(`Player moved to ${packet.position.x}, ${packet.position.y}, ${packet.position.z}`)
+            })
+            
+            // Listen for level chunks
+            client.on('LevelChunk', (packet) => {
+              console.log(`Received chunk at (${packet.x}, ${packet.z})`)
+            })</code></pre>
+            
+                <div class="tip-box" style="background-color: #f6ffed; border-left: 4px solid #52c41a; padding: 16px; margin: 24px 0; border-radius: 0 4px 4px 0;">
+                    <h4 style="margin-top: 0; color: #52c41a;">Performance Tip</h4>
+                    <p style="margin-bottom: 0;">For high-traffic packets like chunk data or entity updates, consider using throttled event handlers to prevent overwhelming your application.</p>
+                </div>
+            
+                <h3>Event Handler Lifecycle</h3>
+                <p>
+                    Properly managing event handlers is important to prevent memory leaks:
+                </p>
+                <pre><code>// Create handler function reference
+            const chatHandler = (packet) => {
+              console.log(`${packet.source.name}: ${packet.message}`)
+            }
+            
+            // Add the handler
+            client.on('Text', chatHandler)
+            
+            // Later, when no longer needed:
+            client.off('Text', chatHandler)
+            
+            // When completely done with client
+            client.removeAllListeners() // Remove all handlers</code></pre>
+            
+                <h3>Using Once Handlers</h3>
+                <p>
+                    For events that should only be handled once, use the <code>once</code> method:
+                </p>
+                <pre><code>// This will only trigger on the first spawn event
+            client.once('spawn', () => {
+              console.log('Player has spawned for the first time!')
+              
+              // Send initial setup packets here
+              client.write('PlayerAction', {
+                action: 0,
+                entityRuntimeId: client.entityId
+              })
+            })</code></pre>
+            
+                <h3>Advanced: Event Chaining</h3>
+                <p>
+                    You can create chains of events to handle complex sequences:
+                </p>
+                <pre><code>// Example: Sequential chunk loading process
+            client.on('LevelChunk', function handleChunk(chunk) {
+              console.log(`Processing chunk at (${chunk.x}, ${chunk.z})`)
+              
+              // Process the chunk data...
+              
+              // Once processed, move to next stage
+              client.once('UpdateBlock', (block) => {
+                if (block.x >> 4 === chunk.x && block.z >> 4 === chunk.z) {
+                  console.log('Chunk finished generating')
+                  
+                  // Continue with additional processing
+                  completeChunkSetup(chunk)
+                }
+              })
+            })
+            
+            function completeChunkSetup(chunk) {
+              // Additional setup after chunk generation
+            }</code></pre>
+            
+                <h3>Custom Event Emitters</h3>
+                <p>
+                    You can create your own event emitters to organize complex logic:
+                </p>
+                <pre><code>const { EventEmitter } = require('events')
+            const { createClient } = require('bedrock-protocol')
+            
+            // Create a world manager with custom events
+            class WorldManager extends EventEmitter {
+              constructor(client) {
+                super()
+                this.client = client
+                this.chunks = new Map()
+                
+                // Set up listeners
+                this.client.on('LevelChunk', (packet) => {
+                  const key = `${packet.x},${packet.z}`
+                  this.chunks.set(key, packet)
+                  
+                  // Emit our custom event
+                  this.emit('chunkLoaded', packet.x, packet.z)
+                })
+                
+                this.client.on('UpdateBlock', (packet) => {
+                  const chunkX = packet.x >> 4
+                  const chunkZ = packet.z >> 4
+                  this.emit('blockUpdate', packet.x, packet.y, packet.z, packet.block)
+                })
+              }
+              
+              isChunkLoaded(x, z) {
+                return this.chunks.has(`${x},${z}`)
+              }
+            }
+            
+            // Usage
+            const client = createClient({ /* options */ })
+            const worldManager = new WorldManager(client)
+            
+            worldManager.on('chunkLoaded', (x, z) => {
+              console.log(`New chunk loaded at (${x}, ${z})`)
+            })
+            
+            worldManager.on('blockUpdate', (x, y, z, block) => {
+              console.log(`Block at (${x}, ${y}, ${z}) updated to ${block.name}`)
+            })</code></pre>
+            
+                <div class="warning-box" style="background-color: #fff2e8; border-left: 4px solid #fa541c; padding: 16px; margin: 24px 0; border-radius: 0 4px 4px 0;">
+                    <h4 style="margin-top: 0; color: #fa541c;">Memory Management Warning</h4>
+                    <p style="margin-bottom: 0;">When creating custom event listeners or caching large amounts of data (like chunks), be sure to implement proper cleanup methods to prevent memory leaks over time.</p>
+                </div>
+            </section>
+            
+            <section id="security" class="section">
+                <h2>Advanced: Security</h2>
+                <p>
+                    Bedrock Protocol implements the necessary security features of the Minecraft Bedrock protocol, including:
+                </p>
+                <ul>
+                    <li><strong>Encryption</strong>: Using the RakNet encryption scheme</li>
+                    <li><strong>Authentication</strong>: Microsoft account authentication for online mode</li>
+                    <li><strong>JWT Verification</strong>: For server-side identity verification</li>
+                </ul>
+                <p>
+                    When implementing servers or proxies, ensure proper validation of incoming packets to prevent exploitation.
+                </p>
+            </section>
+            
+            <section id="performance" class="section">
+                <h2>Advanced: Performance Optimization</h2>
+                <p>
+                    For high-performance applications, consider the following tips:
+                </p>
+                <ul>
+                    <li>Use packet filtering to ignore unnecessary packets</li>
+                    <li>Implement packet batching for more efficient network usage</li>
+                    <li>Consider using worker threads for packet processing in high-volume scenarios</li>
+                </ul>
+                <pre><code>// Example: Filtering packets for performance
+const client = createClient({
+  /* options */
+  filterPackets: ['LevelChunk', 'UpdateBlock'], // Don't process these packets
+})
+
+// Example: Implementing batched writes
+const batchedPackets = []
+function addPacketToBatch(name, params) {
+  batchedPackets.push({ name, params })
+}
+
+function sendBatch() {
+  for (const packet of batchedPackets) {
+    client.write(packet.name, packet.params)
+  }
+  batchedPackets.length = 0
+}
+
+// Send batches every 50ms
+setInterval(sendBatch, 50)</code></pre>
+            </section>
+        </main>
+    </div>
+    
+    <script>
+        // Handle mobile menu toggle
+        const menuButton = document.querySelector('.mobile-menu-button');
+        const sidebar = document.querySelector('.sidebar');
+        
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+        
+        // Handle sidebar navigation
+        const sidebarLinks = document.querySelectorAll('.sidebar-links a');
+        
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                // Close mobile menu when a link is clicked
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
+                
+                // Set active link
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+            });
+        });
+        
+        // Handle smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+        
+        // Search functionality
+        const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
+        const contentSections = document.querySelectorAll('.section');
+        
+        // Build search index
+        const searchIndex = [];
+        
+        contentSections.forEach(section => {
+            // Get heading text
+            const heading = section.querySelector('h1, h2');
+            const headingText = heading ? heading.textContent : '';
+            
+            // Get section text content
+            const text = section.textContent;
+            
+            // Get section ID for linking
+            const id = section.id;
+            
+            searchIndex.push({
+                id,
+                title: headingText,
+                text,
+                element: section
+            });
+        });
+        
+        // Search function
+        function performSearch(query) {
+            query = query.toLowerCase();
+            
+            if (!query) {
+                searchResults.style.display = 'none';
+                return;
+            }
+            
+            // Filter results
+            const results = searchIndex.filter(item => {
+                return (
+                    item.title.toLowerCase().includes(query) ||
+                    item.text.toLowerCase().includes(query)
+                );
+            });
+            
+            // Display results
+            searchResults.innerHTML = '';
+            
+            if (results.length === 0) {
+                searchResults.innerHTML = '<div class="search-result">No results found</div>';
+            } else {
+                results.forEach(result => {
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'search-result';
+                    resultElement.textContent = result.title;
+                    resultElement.addEventListener('click', () => {
+                        // Navigate to result
+                        window.location.hash = '#' + result.id;
+                        
+                        // Scroll to element
+                        result.element.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Hide search results
+                        searchResults.style.display = 'none';
+                        searchInput.value = '';
+                    });
+                    
+                    searchResults.appendChild(resultElement);
+                });
+            }
+            
+            searchResults.style.display = 'block';
+        }
+        
+        // Search event listeners
+        searchInput.addEventListener('input', () => {
+            performSearch(searchInput.value);
+        });
+        
+        searchInput.addEventListener('focus', () => {
+            if (searchInput.value) {
+                performSearch(searchInput.value);
+            }
+        });
+        
+        // Close search results when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                searchResults.style.display = 'none';
+            }
+        });
+        
+        // Highlight current section based on scroll position
+        window.addEventListener('scroll', () => {
+            const scrollPosition = window.scrollY + 100;
+            
+            let currentSection = null;
+            
+            contentSections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    currentSection = section.id;
+                }
+            });
+            
+            if (currentSection) {
+                sidebarLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${currentSection}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
